@@ -1,8 +1,15 @@
 import React, { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { Button, Nav, Navbar, Container, NavDropdown, Stack } from "react-bootstrap";
+import {
+  Button,
+  Nav,
+  Navbar,
+  Container,
+  NavDropdown,
+  Stack,
+} from "react-bootstrap";
 import ModalLogin from "./ModalLogin";
-import UserProfile from "../assets/image/BlankProfile.jpg"
+import UserProfile from "../assets/image/BlankProfile.jpg";
 import Logo from "../assets/image/LogoDumbflix.png";
 import Clip from "../assets/image/Clip.png";
 import Transaction from "../assets/image/Transaction.png";
@@ -24,7 +31,7 @@ export default function Header() {
   const [showLogin, setShowLogin] = useState(false);
   const [showRegister, setShowRegister] = useState(false);
 
-  let { data: profile } = useQuery('profileCache', async () => {
+  let { data: profile } = useQuery("profileCache", async () => {
     const response = await API.get(`/profiles`);
     return response.data.data;
   });
@@ -115,117 +122,202 @@ export default function Header() {
     e.preventDefault();
     navigate("/movies");
   }
-  
+
   return (
     <>
-      <Navbar style={{backgroundColor:"#1F1F1F"}} className="fixed-top" expand="lg">
+      <Navbar
+        style={{ backgroundColor: "#1F1F1F" }}
+        className="fixed-top"
+        expand="lg"
+      >
         <Container>
           <Navbar.Collapse>
             {state.isLogin === true ? (
               state.user.is_admin === true ? (
-              <>
-                <Nav className="justify-content-center">
-                  <img src={Logo} width="100px" alt="Logo"/>
-                </Nav>
-                <Nav className="ms-auto gap-3">
-                  <NavDropdown menuVariant="dark" align="end" title={ <img src={Admin} width="30px" height="30px" alt="" /> }>
-                    <NavDropdown.Item href="/addmovies">
-                      <img src={Clip} width="20px" height="20px" alt="Clip"></img>
-                      <span className="ms-2 text-light fw-semibold">Add Film</span>
-                    </NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item href="/addcategory">
-                      <img src={Clip} width="20px" height="20px" alt="Clip"></img>
-                      <span className="ms-2 text-light fw-semibold">Add Category</span>
-                    </NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item href="/tabletransaction">
-                      <img src={Transaction} width="20px" height="20px" alt="Clip"></img>
-                      <span className="ms-2 text-light fw-semibold">Income Transaction</span>
-                    </NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={logout}>
-                      <img src={Logout} width="20px" height="20px" alt="Logout"></img>
-                      <span className="ms-2 text-light fw-semibold">Logout</span>
-                    </NavDropdown.Item>
-                  </NavDropdown>
-                </Nav>
-              </>  
+                <>
+                  <Nav className="justify-content-center">
+                    <img src={Logo} width="100px" alt="Logo" />
+                  </Nav>
+                  <Nav className="ms-auto gap-3">
+                    <NavDropdown
+                      menuVariant="dark"
+                      align="end"
+                      title={
+                        <img src={Admin} width="30px" height="30px" alt="" />
+                      }
+                    >
+                      <NavDropdown.Item href="/addmovies">
+                        <img
+                          src={Clip}
+                          width="20px"
+                          height="20px"
+                          alt="Clip"
+                        ></img>
+                        <span className="ms-2 text-light fw-semibold">
+                          Add Film
+                        </span>
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item href="/addcategory">
+                        <img
+                          src={Clip}
+                          width="20px"
+                          height="20px"
+                          alt="Clip"
+                        ></img>
+                        <span className="ms-2 text-light fw-semibold">
+                          Add Category
+                        </span>
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item href="/tabletransaction">
+                        <img
+                          src={Transaction}
+                          width="20px"
+                          height="20px"
+                          alt="Clip"
+                        ></img>
+                        <span className="ms-2 text-light fw-semibold">
+                          Income Transaction
+                        </span>
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item onClick={logout}>
+                        <img
+                          src={Logout}
+                          width="20px"
+                          height="20px"
+                          alt="Logout"
+                        ></img>
+                        <span className="ms-2 text-light fw-semibold">
+                          Logout
+                        </span>
+                      </NavDropdown.Item>
+                    </NavDropdown>
+                  </Nav>
+                </>
               ) : (
-              <>
-                <Nav>
-                  <Nav.Link onClick={homeHandler} className="text-light">Home</Nav.Link>
-                  <Nav.Link onClick={tvHandler} className="text-light">TV Shows</Nav.Link>
-                  <Nav.Link onClick={moviesHandler} className="text-light">Movies</Nav.Link>
-                </Nav>
-                <Nav className="justify-content-center">
-                  <img type="submit" src={Logo} onClick={homeLogoHandler} style={{marginLeft:"400px"}} width="100px" alt="Logo"/>
-                </Nav>
-                <Nav className="ms-auto">
-                  <NavDropdown menuVariant="dark" align="end"
-                    title={<img src={profile?.photo ? profile.photo : UserProfile} className="rounded-circle" style={{objectFit:"cover"}} width="40px" height="40px" alt="Profile" />}>
-                    <NavDropdown.Item href="/profile">
-                      <img src={User} width="20px" height="20px" alt=""></img>
-                      <span className="ms-2 text-light fw-semibold">Profile</span>
-                    </NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item href="/payment">
-                      <img src={Pay} width="20px" height="20px" alt=""></img>
-                      <span className="ms-2 text-light fw-semibold">Pay</span>
-                    </NavDropdown.Item>
-                    <NavDropdown.Divider />
-                    <NavDropdown.Item onClick={logout}>
-                      <img src={Logout} width="20px" height="20px" alt=""></img>
-                      <span className="ms-2 text-light fw-semibold">Logout</span>
-                    </NavDropdown.Item>
-                  </NavDropdown>
-                </Nav>
-              </>
+                <>
+                  <Nav>
+                    <Nav.Link onClick={homeHandler} className="text-light">
+                      Home
+                    </Nav.Link>
+                    <Nav.Link onClick={tvHandler} className="text-light">
+                      TV Shows
+                    </Nav.Link>
+                    <Nav.Link onClick={moviesHandler} className="text-light">
+                      Movies
+                    </Nav.Link>
+                  </Nav>
+                  <Nav className="justify-content-center">
+                    <img
+                      type="submit"
+                      src={Logo}
+                      onClick={homeLogoHandler}
+                      style={{ marginLeft: "400px" }}
+                      width="100px"
+                      alt="Logo"
+                    />
+                  </Nav>
+                  <Nav className="ms-auto">
+                    <NavDropdown
+                      menuVariant="dark"
+                      align="end"
+                      title={
+                        <img
+                          src={profile?.photo ? profile.photo : UserProfile}
+                          className="rounded-circle"
+                          style={{ objectFit: "cover" }}
+                          width="40px"
+                          height="40px"
+                          alt="Profile"
+                        />
+                      }
+                    >
+                      <NavDropdown.Item href="/profile">
+                        <img src={User} width="20px" height="20px" alt=""></img>
+                        <span className="ms-2 text-light fw-semibold">
+                          Profile
+                        </span>
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item href="/payment">
+                        <img src={Pay} width="20px" height="20px" alt=""></img>
+                        <span className="ms-2 text-light fw-semibold">Pay</span>
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item onClick={logout}>
+                        <img
+                          src={Logout}
+                          width="20px"
+                          height="20px"
+                          alt=""
+                        ></img>
+                        <span className="ms-2 text-light fw-semibold">
+                          Logout
+                        </span>
+                      </NavDropdown.Item>
+                    </NavDropdown>
+                  </Nav>
+                </>
               )
             ) : (
-            <>
-              <Nav className="pt-2 pb-2" style={{marginLeft:"-5px"}}>
-                <Nav.Link onClick={homeHandler} className="text-light">Home</Nav.Link>
-                <Nav.Link onClick={tvHandler} className="text-light">TV Shows</Nav.Link>
-                <Nav.Link onClick={moviesHandler} className="text-light">Movies</Nav.Link>
-              </Nav>
-              <Nav className="justify-content-center">
-                <img type="submit" src={Logo} onClick={homeLogoHandler} style={{marginLeft:"380px"}} width="100px" alt="Logo"/>
-              </Nav>
-              <Nav className="ms-auto">
-                <Stack direction="horizontal" gap={3}>
-                  <Button
-                    onClick={handleShowRegister}
-                    style={{
-                      backgroundColor: "white",
-                      color: "#E50914",
-                      paddingLeft: "15px",
-                      paddingRight: "15px",
-                      paddingTop: "1px",
-                      paddingBottom: "1px",
-                      border: "2px solid white",
-                    }}
-                    size="sm"
-                  >
-                  Register
-                  </Button>
-                  <Button
-                    onClick={handleShowLogin}
-                    style={{
-                      backgroundColor: "#E50914",
-                      paddingLeft: "25px",
-                      paddingRight: "25px",
-                      paddingTop: "1px",
-                      paddingBottom: "1px",
-                      border: "2px solid #E50914",
-                    }}
-                    size="sm"
-                  >
-                  Login
-                  </Button>
-                </Stack>
-              </Nav>
-            </>
+              <>
+                <Nav className="pt-2 pb-2" style={{ marginLeft: "-5px" }}>
+                  <Nav.Link onClick={homeHandler} className="text-light">
+                    Home
+                  </Nav.Link>
+                  <Nav.Link onClick={tvHandler} className="text-light">
+                    TV Shows
+                  </Nav.Link>
+                  <Nav.Link onClick={moviesHandler} className="text-light">
+                    Movies
+                  </Nav.Link>
+                </Nav>
+                <Nav className="justify-content-center">
+                  <img
+                    type="submit"
+                    src={Logo}
+                    onClick={homeLogoHandler}
+                    style={{ marginLeft: "380px" }}
+                    width="100px"
+                    alt="Logo"
+                  />
+                </Nav>
+                <Nav className="ms-auto">
+                  <Stack direction="horizontal" gap={3}>
+                    <Button
+                      onClick={handleShowRegister}
+                      style={{
+                        backgroundColor: "white",
+                        color: "#E50914",
+                        paddingLeft: "15px",
+                        paddingRight: "15px",
+                        paddingTop: "1px",
+                        paddingBottom: "1px",
+                        border: "2px solid white",
+                      }}
+                      size="sm"
+                    >
+                      Register
+                    </Button>
+                    <Button
+                      onClick={handleShowLogin}
+                      style={{
+                        backgroundColor: "#E50914",
+                        paddingLeft: "25px",
+                        paddingRight: "25px",
+                        paddingTop: "1px",
+                        paddingBottom: "1px",
+                        border: "2px solid #E50914",
+                      }}
+                      size="sm"
+                    >
+                      Login
+                    </Button>
+                  </Stack>
+                </Nav>
+              </>
             )}
           </Navbar.Collapse>
         </Container>

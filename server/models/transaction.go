@@ -3,26 +3,25 @@ package models
 import "time"
 
 type Transaction struct {
-	ID        int                  `json:"id" gorm:"primary_key:auto_increment"`
-	Startdate time.Time            `json:"startdate"`
-	Duedate   time.Time            `json:"duedate"`
-	Attache   string               `json:"attach" gorm:"type: text"`
-	Status    string               `json:"status" gorm:"type: text"`
-	User      UsersProfileResponse `json:"user"`
+	ID        int                  `json:"id" gorm:"primary_key: auto_increment"`
+	StartDate time.Time            `json:"startdate"`
+	DueDate   time.Time            `json:"duedate"`
 	UserID    int                  `json:"user_id"`
-	Price     int                  `json:"price"`
+	User      UsersProfileResponse `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Status    string               `json:"status" gorm:"type: varchar(20)"`
+	Price     int                  `json:"total_price" gorm:"type: int"`
 }
 
-type TransactionInUser struct {
-	ID        int                  `json:"id" gorm:"primary_key:auto_increment"`
-	Startdate time.Time            `json:"startdate"`
-	Duedate   time.Time            `json:"duedate"`
-	Attache   string               `json:"attach" gorm:"type: text"`
-	Status    string               `json:"status" gorm:"type: text"`
-	User      UsersProfileResponse `json:"user"`
+type TransactionResponse struct {
+	ID        int                  `json:"id" gorm:"primary_key: auto_increment"`
+	StartDate time.Time            `json:"startdate"`
+	DueDate   time.Time            `json:"duedate"`
 	UserID    int                  `json:"user_id"`
+	User      UsersProfileResponse `json:"user" gorm:"constraint:OnUpdate:CASCADE,OnDelete:SET NULL;"`
+	Status    string               `json:"status" gorm:"type: varchar(20)"`
+	Price     int                  `json:"total_price" gorm:"type: int"`
 }
 
-func (TransactionInUser) TableName() string {
+func (TransactionResponse) TableName() string {
 	return "transactions"
 }

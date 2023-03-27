@@ -12,12 +12,15 @@ export default function Updates(props) {
     let navigate = useNavigate();
     const [state] = useContext(UserContext);
     const [imageUrl, setImageUrl] = useState(Profile)
-    const [formUpdateProfile, setFormUpdateProfile] = useState({})
+
+    const [formUpdateProfile, setFormUpdateProfile] = useState({
+      photo : ""
+    });
 
     async function getDataUpdateProfile(){
         const responseProfile = await API.get("/profile");
-        if (responseProfile.data.data.photo !== "");
-            setImageUrl(responseProfile.data.data.photo);
+        if (responseProfile.data.profile.photo !== "");
+            setImageUrl(responseProfile.data.profile.photo);
     }
 
     useEffect(() =>{
@@ -50,6 +53,7 @@ export default function Updates(props) {
     
           // Store data with FormData as object
           const formData = new FormData();
+
           if (formUpdateProfile.photo) {
             formData.set("photo", formUpdateProfile?.photo[0], formUpdateProfile?.photo[0]?.name);
           }

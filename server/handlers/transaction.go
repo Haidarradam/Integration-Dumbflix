@@ -2,18 +2,22 @@ package handlers
 
 import (
 	dto "dumbflix/dto/result"
+	transactionsdto "dumbflix/dto/transaction"
 	"dumbflix/models"
 	"dumbflix/repositories"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"strconv"
 	"time"
 
+	"github.com/go-playground/validator/v10"
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/labstack/echo/v4"
 	"github.com/midtrans/midtrans-go"
 	"github.com/midtrans/midtrans-go/snap"
+	"gopkg.in/gomail.v2"
 )
 
 type handlerTransaction struct {
@@ -50,6 +54,17 @@ func (h *handlerTransaction) GetTransaction(c echo.Context) error {
 }
 
 func (h *handlerTransaction) CreateTransaction(c echo.Context) error {
+	request := new(transactionsdto.TransactionRequest)
+	if err := c.Bind(request); err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+	}
+
+	validation := validator.New()
+	err := validation.Struct(request)
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+	}
+
 	userLogin := c.Get("userLogin")
 	userId := userLogin.(jwt.MapClaims)["id"].(float64)
 
@@ -69,23 +84,21 @@ func (h *handlerTransaction) CreateTransaction(c echo.Context) error {
 	transaction := models.Transaction{
 		ID:        transactionId,
 		UserID:    int(userId),
-		Startdate: Startdate,
-		Duedate:   Duedate,
+		StartDate: Startdate,
+		DueDate:   Duedate,
 		Price:     30000,
 		Status:    "pending",
 	}
 
-	fmt.Println("USER ID : ", userId)
-
-	newTransactions, err := h.TransactionRepository.CreateTransaction(transaction)
+	dataTransactions, err := h.TransactionRepository.CreateTransaction(transaction)
 	if err != nil {
 		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
 	}
 
-	dataTransactions, err := h.TransactionRepository.GetTransaction(newTransactions.ID)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
-	}
+	// dataTransactions, err := h.TransactionRepository.GetTransaction(newTransactions.ID)
+	// if err != nil {
+	// 	return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
+	// }
 
 	// 1. Initiate Snap client
 	var s = snap.Client{}
@@ -108,104 +121,102 @@ func (h *handlerTransaction) CreateTransaction(c echo.Context) error {
 
 	//3. Execute request create Snap transaction to Midtrans Snap API
 	snapResp, _ := s.CreateTransaction(req)
-	fmt.Println(snapResp)
+
 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: snapResp})
 }
 
-// func (h *handlerTransaction) Notification(c echo.Context) error {
-// 	var notificationPayload map[string]interface{}
+func (h *handlerTransaction) Notification(c echo.Context) error {
+	var notificationPayload map[string]interface{}
 
-// 	if err := c.Bind(&notificationPayload); err != nil {
-// 		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
-// 	}
+	if err := c.Bind(&notificationPayload); err != nil {
+		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+	}
 
-// 	transactionStatus := notificationPayload["transaction_status"].(string)
-// 	fraudStatus := notificationPayload["fraud_status"].(string)
-// 	orderId := notificationPayload["order_id"].(string)
+	transactionStatus := notificationPayload["transaction_status"].(string)
+	fraudStatus := notificationPayload["fraud_status"].(string)
+	orderId := notificationPayload["order_id"].(string)
 
-// 	order_id, _ := strconv.Atoi(orderId)
+	order_id, _ := strconv.Atoi(orderId)
 
-// 	fmt.Print("payload: ", notificationPayload)
+	fmt.Print("payload: ", notificationPayload)
 
-// 	transaction, _ := h.TransactionRepository.GetTransaction(order_id)
-// 	if transactionStatus == "capture" {
-// 		if fraudStatus == "challenge" {
-// 			h.TransactionRepository.UpdateTransaction("pending", order_id)
-// 		} else if fraudStatus == "accept" {
-// 			SendMail("success", transaction)
-// 			_, err := h.TransactionRepository.UpdateTransaction("success", order_id)
-// 			if err != nil {
-// 				fmt.Println(err)
-// 			}
-// 		}
-// 	} else if transactionStatus == "settlement" {
-// 		SendMail("success", transaction)
-// 		_, err := h.TransactionRepository.UpdateTransaction("success", order_id)
-// 		if err != nil {
-// 			fmt.Println(err)
-// 		}
-// 	} else if transactionStatus == "deny" {
-// 		h.TransactionRepository.UpdateTransaction("failed", order_id)
-// 	} else if transactionStatus == "cancel" || transactionStatus == "expire" {
-// 		h.TransactionRepository.UpdateTransaction("failed", order_id)
-// 	} else if transactionStatus == "pending" {
-// 		h.TransactionRepository.UpdateTransaction("pending", order_id)
-// 	}
+	transaction, _ := h.TransactionRepository.GetTransaction(order_id)
+	if transactionStatus == "capture" {
+		if fraudStatus == "challenge" {
+			h.TransactionRepository.UpdateTransaction("pending", order_id)
+		} else if fraudStatus == "accept" {
+			SendMail("success", transaction)
+			_, err := h.TransactionRepository.UpdateTransaction("success", order_id)
+			if err != nil {
+				fmt.Println(err)
+			}
+		}
+	} else if transactionStatus == "settlement" {
+		SendMail("success", transaction)
+		_, err := h.TransactionRepository.UpdateTransaction("success", order_id)
+		if err != nil {
+			fmt.Println(err)
+		}
+	} else if transactionStatus == "deny" {
+		h.TransactionRepository.UpdateTransaction("failed", order_id)
+	} else if transactionStatus == "cancel" || transactionStatus == "expire" {
+		h.TransactionRepository.UpdateTransaction("failed", order_id)
+	} else if transactionStatus == "pending" {
+		h.TransactionRepository.UpdateTransaction("pending", order_id)
+	}
 
-// 	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: notificationPayload})
-// }
+	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Data: notificationPayload})
+}
 
-// func SendMail(status string, transaction models.Transaction) {
+func SendMail(status string, transaction models.Transaction) {
 
-// 	if status != transaction.Status && (status == "success") {
-// 		var CONFIG_SMTP_HOST = "smtp.gmail.com"
-// 		var CONFIG_SMTP_PORT = 587
-// 		var CONFIG_SENDER_NAME = "Waysbeans <waysbeans.admin@gmail.com>"
-// 		var CONFIG_AUTH_EMAIL = os.Getenv("EMAIL_SYSTEM")
-// 		var CONFIG_AUTH_PASSWORD = os.Getenv("PASSWORD_SYSTEM")
+	if status != transaction.Status && (status == "success") {
+		var CONFIG_SMTP_HOST = "smtp.gmail.com"
+		var CONFIG_SMTP_PORT = 587
+		var CONFIG_SENDER_NAME = "Waysbeans <waysbeans.admin@gmail.com>"
+		var CONFIG_AUTH_EMAIL = os.Getenv("EMAIL_SYSTEM")
+		var CONFIG_AUTH_PASSWORD = os.Getenv("PASSWORD_SYSTEM")
 
-// 		var totalQuantity = strconv.Itoa(transaction.TotalQuantity)
-// 		var totalPrice = strconv.Itoa(transaction.TotalPrice)
+		var totalPrice = strconv.Itoa(transaction.Price)
 
-// 		mailer := gomail.NewMessage()
-// 		mailer.SetHeader("From", CONFIG_SENDER_NAME)
-// 		mailer.SetHeader("To", transaction.Email)
-// 		mailer.SetHeader("Subject", "Transaction Status")
-// 		mailer.SetBody("text/html", fmt.Sprintf(`<!DOCTYPE html>
-//     <html lang="en">
-//       <head>
-//       <meta charset="UTF-8" />
-//       <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-//       <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-//       <title>Document</title>
-//       <style>
-//         h1 {
-//         color: brown;
-//         }
-//       </style>
-//       </head>
-//       <body>
-//       <h2>Product payment :</h2>
-//       <ul style="list-style-type:none;">
-//         <li>Total Quantity : %s</li>
-//         <li>Total payment: Rp.%s</li>
-//         <li>Status : <b>%s</b></li>
-//       </ul>
-//       </body>
-//     </html>`, totalQuantity, totalPrice, status))
+		mailer := gomail.NewMessage()
+		mailer.SetHeader("From", CONFIG_SENDER_NAME)
+		mailer.SetHeader("To", "bahanbelajardw@gmail.com")
+		mailer.SetHeader("Subject", "Transaction Status")
+		mailer.SetBody("text/html", fmt.Sprintf(`<!DOCTYPE html>
+    <html lang="en">
+      <head>
+      <meta charset="UTF-8" />
+      <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <title>Document</title>
+      <style>
+        h1 {
+        color: brown;
+        }
+      </style>
+      </head>
+      <body>
+      <h2>Product payment :</h2>
+      <ul style="list-style-type:none;">
+        <li>Total payment: Rp.%s</li>
+        <li>Status : <b>%s</b></li>
+      </ul>
+      </body>
+    </html>`, totalPrice, status))
 
-// 		dialer := gomail.NewDialer(
-// 			CONFIG_SMTP_HOST,
-// 			CONFIG_SMTP_PORT,
-// 			CONFIG_AUTH_EMAIL,
-// 			CONFIG_AUTH_PASSWORD,
-// 		)
+		dialer := gomail.NewDialer(
+			CONFIG_SMTP_HOST,
+			CONFIG_SMTP_PORT,
+			CONFIG_AUTH_EMAIL,
+			CONFIG_AUTH_PASSWORD,
+		)
 
-// 		err := dialer.DialAndSend(mailer)
-// 		if err != nil {
-// 			log.Fatal(err.Error())
-// 		}
+		err := dialer.DialAndSend(mailer)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 
-// 		log.Println("Mail sent! to " + CONFIG_AUTH_EMAIL)
-// 	}
-// }
+		log.Println("Mail sent! to " + CONFIG_AUTH_EMAIL)
+	}
+}

@@ -5,7 +5,6 @@ import (
 	"dumbflix/pkg/mysql"
 	"dumbflix/routes"
 	"fmt"
-	"os"
 
 	"github.com/joho/godotenv"
 	"github.com/labstack/echo/v4"
@@ -33,8 +32,6 @@ func main() {
 	routes.RouteInit(e.Group("/api/v1"))
 	e.Static("/uploads", "./uploads")
 
-	port := os.Getenv("PORT")
-
-	fmt.Println("Server starting", port)
-	e.Logger.Fatal(e.Start(":" + port))
+	fmt.Println("server running localhost:5000")
+	e.Logger.Fatal(e.Start("localhost:5000"))
 }

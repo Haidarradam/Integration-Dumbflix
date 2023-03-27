@@ -11,6 +11,5 @@ type TransactionRequest struct {
 	DueDate   time.Time                   `json:"duedate" form:"duedate" `
 	User      models.UsersProfileResponse `json:"userId"`
 	UserID    int                         `json:"user_id"`
-	Attache   string                      `json:"attach" form:"image" gorm:"type: text" `
 	Status    string                      `json:"status" form:"status" gorm:"type: text"`
 }

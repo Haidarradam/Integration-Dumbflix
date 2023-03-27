@@ -33,7 +33,9 @@ export default function Profile() {
   let { data: profile } = useQuery('profileCache', async () => {
     const response = await API.get(`/profile`);
     return response.data.data;
-  });
+  }, {refetchInterval : 1000});
+  
+  console.log(profile)
 
   return (
     <>
