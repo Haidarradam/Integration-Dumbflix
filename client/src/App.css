@@ -1,7 +1,7 @@
 body {
-    background-color: black!important;
+  background-color: #222831 !important;
 }
 
 .formInputMovies::placeholder {
-    color: #B1B1B1!important;
+  color: black !important;
 }

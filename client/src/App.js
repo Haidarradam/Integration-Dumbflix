@@ -8,24 +8,25 @@ import AddMovie from "./pages/AddMovies";
 import Detail from "./pages/DetailCards";
 import Payment from "./pages/Payment";
 import AddCategory from "./pages/AddCategory";
+import ListMovie from "./pages/ListMovies";
 import "./App.css";
 // import { AdminRoute, UserRoute } from "./component/PrivateRoute";
-
 
 export default function App() {
   return (
     <>
       <div className="App">
         <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/tvshows" element={<TvShow />} />
-            <Route path="/addmovies" element={<AddMovie />} />
-            <Route path="/tabletransaction" element={<TableTransaction />} />
-            <Route path="/movies" element={<Movies />} />
-            <Route path="/detail/:id" element={<Detail />} />
-            <Route path="/payment" element={<Payment />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/addcategory" element={<AddCategory />} />
+          <Route path="/" element={<Home />} />
+          <Route path="/tvshows" element={<TvShow />} />
+          <Route path="/addmovies" element={<AddMovie />} />
+          <Route path="/tabletransaction" element={<TableTransaction />} />
+          <Route path="/movies" element={<Movies />} />
+          <Route path="/detail/:id" element={<Detail />} />
+          <Route path="/payment" element={<Payment />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/addcategory" element={<AddCategory />} />
+          <Route path="/listmovies" element={<ListMovie />} />
         </Routes>
       </div>
     </>

@@ -1,12 +1,11 @@
 import Table from "react-bootstrap/Table";
 import { Container } from "react-bootstrap";
-import { API } from "../config/api";
+import { API } from "../../config/api";
 import { useQuery } from "react-query";
 
 export default function TableTransactions() {
   let { data: transaction } = useQuery("transactionCache", async () => {
     const response = await API.get("/transactions");
-    console.log(response.data.data);
     return response.data.data;
   });
   return (

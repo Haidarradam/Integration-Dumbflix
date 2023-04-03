@@ -17,5 +17,5 @@ func FilmRoutes(e *echo.Group) {
 	e.GET("/films", h.FindFilm)
 	e.POST("/film", middleware.Auth(middleware.UploadFile(h.CreateFilm)))
 	e.PATCH("/film", middleware.Auth(middleware.UploadFile(h.UpdateFilm)))
-	e.DELETE("/film", middleware.Auth(h.DeleteFilm))
+	e.DELETE("/film/:id", middleware.Auth(h.DeleteFilm))
 }

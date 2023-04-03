@@ -63,11 +63,13 @@ func (h *handlerFilm) CreateFilm(c echo.Context) error {
 
 	request := filmdto.FilmRequest{
 		Title:         c.FormValue("title"),
+		TitleEps:      c.FormValue("titleeps"),
 		Year:          year,
 		CategoryID:    category_id,
 		Description:   c.FormValue("description"),
 		Thumbnailfilm: dataFile,
 		LinkFilm:      c.FormValue("linkfilm"),
+		LinkEps:       c.FormValue("linkeps"),
 	}
 
 	validation := validator.New()
@@ -93,10 +95,12 @@ func (h *handlerFilm) CreateFilm(c echo.Context) error {
 
 	film := models.Film{
 		Title:         request.Title,
+		TitleEps:      request.TitleEps,
 		Thumbnailfilm: resp.SecureURL,
 		Year:          request.Year,
 		CategoryID:    request.CategoryID,
 		LinkFilm:      request.LinkFilm,
+		LinkEps:       request.LinkEps,
 		Description:   request.Description,
 	}
 
@@ -166,42 +170,35 @@ func (h *handlerFilm) UpdateFilm(c echo.Context) error {
 
 func (h *handlerFilm) DeleteFilm(c echo.Context) error {
 	userLogin := c.Get("userLogin")
-	userId := userLogin.(jwt.MapClaims)["id"].(float64)
+	userAdmin := userLogin.(jwt.MapClaims)["is_admin"].(bool)
+	if userAdmin {
+		id, _ := strconv.Atoi(c.Param("id"))
 
-	film, err := h.FilmRepository.GetFilm(int(userId))
-	if err != nil {
-		return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+		film, err := h.FilmRepository.GetFilm(id)
+		if err != nil {
+			return c.JSON(http.StatusBadRequest, dto.ErrorResult{Status: http.StatusBadRequest, Message: err.Error()})
+		}
+
+		data, err := h.FilmRepository.DeleteFilm(film)
+		if err != nil {
+			return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
+		}
+		return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Message: "Product data deleted successfully", Data: convertResponseFilm(data)})
+	} else {
+		return c.JSON(http.StatusUnauthorized, dto.ErrorResult{Status: http.StatusUnauthorized, Message: "Sorry, you're not Admin"})
 	}
-
-	fileName := film.Thumbnailfilm
-	dirPath := "uploads"
-
-	filePath := fmt.Sprintf("%s/%s", dirPath, fileName)
-
-	data, err := h.FilmRepository.DeleteFilm(film)
-	if err != nil {
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
-	}
-
-	err = os.Remove(filePath)
-	if err != nil {
-		fmt.Println("Failed to delete file"+fileName+":", err)
-		return c.JSON(http.StatusInternalServerError, dto.ErrorResult{Status: http.StatusInternalServerError, Message: err.Error()})
-	}
-
-	fmt.Println("File " + fileName + " deleted successfully")
-
-	return c.JSON(http.StatusOK, dto.SuccessResult{Status: http.StatusOK, Message: "Profile data deleted successfully", Data: convertResponseFilm(data)})
 }
 
 func convertResponseFilm(u models.Film) filmdto.FilmResponse {
 	return filmdto.FilmResponse{
 		ID:            u.ID,
 		Title:         u.Title,
+		TitleEps:      u.TitleEps,
 		Thumbnailfilm: u.Thumbnailfilm,
 		Category:      u.Category,
 		Year:          u.Year,
 		LinkFilm:      u.LinkFilm,
+		LinkEps:       u.LinkEps,
 		Description:   u.Description,
 	}
 }

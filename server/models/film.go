@@ -3,23 +3,27 @@ package models
 type Film struct {
 	ID            int              `json:"id" gorm:"primary_key:auto_increment"`
 	Title         string           `json:"title" gorm:"type: varchar(255)"`
+	TitleEps      string           `json:"titleEps" gorm:"type: varchar(255)"`
 	Thumbnailfilm string           `json:"thumbnailfilm" gorm:"type:varchar(255)"`
 	Year          int              `json:"year" gorm:"type: int" `
 	Category      CategoryResponse `json:"category" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CategoryID    int              `json:"category_id"`
 	Description   string           `json:"description" gorm:"type: text"`
-	LinkFilm      string           `json:"linkfilm" gorm:"type: text" form:"linkfilm"`
+	LinkFilm      string           `json:"linkfilm" gorm:"type: text"`
+	LinkEps       string           `json:"linkEps" gorm:"type: text"`
 }
 
 type FilmResponse struct {
 	ID            int              `json:"id"`
 	Title         string           `json:"title" gorm:"type: varchar(255)"`
+	TitleEps      string           `json:"titleEps" gorm:"type: varchar(255)"`
 	Thumbnailfilm string           `json:"thumbnailfilm" gorm:"type: varchar(255)"`
 	Year          string           `json:"year"`
 	Category      CategoryResponse `json:"category" gorm:"constraint:OnUpdate:CASCADE,OnDelete:CASCADE;"`
 	CategoryID    int              `json:"category_id"`
 	Description   string           `json:"description" gorm:"type: text"`
 	LinkFilm      string           `json:"linkfilm"`
+	LinkEps       string           `json:"linkEps" gorm:"type: text"`
 }
 
 // type FilmInCategory struct {

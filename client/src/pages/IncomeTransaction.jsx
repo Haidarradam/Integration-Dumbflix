@@ -1,5 +1,5 @@
 import Navbar from "../component/Navbar";
-import ListTransaction from "../component/TableTransaction";
+import ListTransaction from "../component/dashboardAdmin/TableTransaction";
 
 export default function ListProducts() {
   return (

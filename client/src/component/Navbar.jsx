@@ -106,6 +106,7 @@ export default function Header() {
 
   function homeHandler() {
     navigate("/");
+    window.location.reload();
   }
 
   function homeLogoHandler() {
@@ -126,7 +127,7 @@ export default function Header() {
   return (
     <>
       <Navbar
-        style={{ backgroundColor: "#1F1F1F" }}
+        style={{ backgroundColor: "#393E46" }}
         className="fixed-top"
         expand="lg"
       >
@@ -154,7 +155,7 @@ export default function Header() {
                           alt="Clip"
                         ></img>
                         <span className="ms-2 text-light fw-semibold">
-                          Add Film
+                          Add Movies
                         </span>
                       </NavDropdown.Item>
                       <NavDropdown.Divider />
@@ -167,6 +168,18 @@ export default function Header() {
                         ></img>
                         <span className="ms-2 text-light fw-semibold">
                           Add Category
+                        </span>
+                      </NavDropdown.Item>
+                      <NavDropdown.Divider />
+                      <NavDropdown.Item href="/listmovies">
+                        <img
+                          src={Clip}
+                          width="20px"
+                          height="20px"
+                          alt="Clip"
+                        ></img>
+                        <span className="ms-2 text-light fw-semibold">
+                          List Movies
                         </span>
                       </NavDropdown.Item>
                       <NavDropdown.Divider />
