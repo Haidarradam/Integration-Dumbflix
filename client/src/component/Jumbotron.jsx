@@ -1,16 +1,10 @@
 import Carousel from "react-bootstrap/Carousel";
-import Title1 from "../assets/image/Thewitchertitle.png";
 import { NavLink } from "react-router-dom";
 import { Button, Container } from "react-bootstrap";
 import { useQuery } from "react-query";
 import { API } from "../config/api";
-import { useContext, useState } from "react";
-import { UserContext } from "../context/userContext";
 
 export default function Jumbotrons() {
-  const [state] = useContext(UserContext);
-  const [showLogin, setShowLogin] = useState(false);
-
   // Fetching Film data from database
   let { data: films } = useQuery("filmCache", async () => {
     const response = await API.get("/films");
@@ -46,7 +40,7 @@ export default function Jumbotrons() {
                   <div className="d-flex gap-3 justify-content-center">
                     <p>{item.year}</p>
                     <p className="border border-2 rounded pe-3 ps-3 shadow-lg">
-                      TV Show
+                      Movie
                     </p>
                   </div>
                   <NavLink
