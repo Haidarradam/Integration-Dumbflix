@@ -52,9 +52,9 @@ export default function Card() {
                           alt="Card"
                         />
                       </div>
-                      <h5 className="fw-semibold text-light mt-3">
+                      <h6 className="fw-semibold text-light mt-3">
                         {item.title}
-                      </h5>
+                      </h6>
                       <p className="text-light">{item.year}</p>
                     </div>
                   </div>
