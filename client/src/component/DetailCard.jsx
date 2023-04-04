@@ -66,13 +66,14 @@ export default function Details(props) {
                 className="mySwiper"
               >
                 <SwiperSlide>
-                  <div className="carousel-item active">
+                  <div>
                     <iframe
                       width="610"
                       height="300"
                       src={films?.linkEps}
                       alt="Video"
                       allowFullScreen
+                      style={{ objectFit: "contain" }}
                     />
                     {/* <p className="text-center mt-2 text-light">
                       {films?.titleEps}
