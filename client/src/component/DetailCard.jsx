@@ -60,27 +60,27 @@ export default function Details(props) {
             </div>
 
             <div className="col-md-5">
-              <Swiper
+              {/* <Swiper
                 navigation={true}
                 modules={[Navigation]}
                 className="mySwiper"
               >
                 <SwiperSlide>
-                  <div>
-                    <iframe
-                      width="610"
-                      height="300"
-                      src={films?.linkEps}
-                      alt="Video"
-                      allowFullScreen
-                      style={{ objectFit: "contain" }}
-                    />
-                    {/* <p className="text-center mt-2 text-light">
+                  <div> */}
+              <iframe
+                width="610"
+                height="300"
+                src={films?.linkEps}
+                alt="Video"
+                allowFullScreen
+                style={{ objectFit: "contain" }}
+              />
+              {/* <p className="text-center mt-2 text-light">
                       {films?.titleEps}
                     </p> */}
-                  </div>
-                </SwiperSlide>
-                {/* <SwiperSlide>
+            </div>
+            {/* </SwiperSlide> */}
+            {/* <SwiperSlide>
                   <div className="carousel-item active">
                     <img
                       src={Eps1}
@@ -90,8 +90,8 @@ export default function Details(props) {
                     <p className="text-center mt-2 text-light">Movies : Ep 2</p>
                   </div>
                 </SwiperSlide> */}
-              </Swiper>
-            </div>
+            {/* </Swiper> */}
+            {/* </div> */}
           </div>
         </Container>
       </div>
