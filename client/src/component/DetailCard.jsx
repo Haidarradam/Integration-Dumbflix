@@ -68,7 +68,7 @@ export default function Details(props) {
                 <SwiperSlide>
                   <div> */}
               <iframe
-                width="590"
+                width="500"
                 height="300"
                 src={films?.linkEps}
                 alt="Video"
