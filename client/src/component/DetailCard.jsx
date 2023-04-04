@@ -74,12 +74,12 @@ export default function Details(props) {
                       alt="Video"
                       allowFullScreen
                     />
-                    <p className="text-center mt-2 text-light">
+                    {/* <p className="text-center mt-2 text-light">
                       {films?.titleEps}
-                    </p>
+                    </p> */}
                   </div>
                 </SwiperSlide>
-                <SwiperSlide>
+                {/* <SwiperSlide>
                   <div className="carousel-item active">
                     <img
                       src={Eps1}
@@ -88,7 +88,7 @@ export default function Details(props) {
                     />
                     <p className="text-center mt-2 text-light">Movies : Ep 2</p>
                   </div>
-                </SwiperSlide>
+                </SwiperSlide> */}
               </Swiper>
             </div>
           </div>
