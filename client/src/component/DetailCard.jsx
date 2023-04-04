@@ -68,12 +68,11 @@ export default function Details(props) {
                 <SwiperSlide>
                   <div> */}
               <iframe
-                width="500"
+                width="590"
                 height="300"
                 src={films?.linkEps}
                 alt="Video"
                 allowFullScreen
-                style={{ objectFit: "contain" }}
               />
               {/* <p className="text-center mt-2 text-light">
                       {films?.titleEps}
